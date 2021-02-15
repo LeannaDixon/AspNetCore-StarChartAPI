@@ -70,5 +70,24 @@ namespace StarChart.Controllers
 
             return Ok(celestialObjects);
         }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+           var allCelestialObjects = (IEnumerable<CelestialObject>)_context.CelestialObjects;
+
+            foreach (var star in allCelestialObjects)
+            {
+                var nextStarId = star.Id +1;
+                if (nextStarId > allCelestialObjects.Count())
+                {
+                    var previousStarId = star.Id - 1;
+                    star.Satellites.Add(allCelestialObjects.Where(x => x.Id == previousStarId).FirstOrDefault());
+                }
+                star.Satellites.Add(allCelestialObjects.Where(x => x.Id == nextStarId).FirstOrDefault());
+            }
+            
+            return Ok(allCelestialObjects);
+        }
     }
 }
